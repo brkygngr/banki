@@ -1,13 +1,13 @@
-package com.brkygngr.banki;
+package com.brkygngr.banking;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BankiApplicationTests {
+class BankingApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+  @Test
+  void contextLoads() {
+  }
 
 }
