@@ -1,0 +1,39 @@
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --dbname=${DB_NAME} --host=localhost --port=5432 --username=${DB_USERNAME}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - '${PGADMIN_PORT}:80'
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+    depends_on:
+      - postgresql
+
+volumes:
+  postgresdata:
+  pgadmindata:
+
+networks:
+  default:
+    name: docker_network
