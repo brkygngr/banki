@@ -12,10 +12,12 @@ services:
       - postgresdata:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=${DB_NAME} --host=localhost --port=5432 --username=${DB_USERNAME}" ]
+      test: [ "CMD-SHELL", "pg_isready --dbname=${DB_NAME} --host=localhost --port=${DB_PORT} --username=${DB_USERNAME}" ]
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - docker_network
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -28,12 +30,36 @@ services:
     volumes:
       - pgadmindata:/var/lib/pgadmin
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
+    networks:
+      - docker_network
+
+  keycloak:
+    image: keycloak/keycloak:latest
+    container_name: keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgresql:5432/${DB_NAME}
+      KC_DB_USERNAME: ${DB_USERNAME}
+      KC_DB_PASSWORD: ${DB_PASSWORD}
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_ENABLED: 'true'
+    command: start-dev
+    ports:
+      - '${KEYCLOAK_PORT}:8080'
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    networks:
+      - docker_network
 
 volumes:
   postgresdata:
   pgadmindata:
 
 networks:
-  default:
+  docker_network:
     name: docker_network
