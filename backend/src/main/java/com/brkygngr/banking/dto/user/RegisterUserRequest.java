@@ -1,4 +1,4 @@
-package com.brkygngr.banking.dto;
+package com.brkygngr.banking.dto.user;
 
 import com.brkygngr.banking.validation.Password;
 import jakarta.validation.constraints.Email;

@@ -1,10 +1,10 @@
 package com.brkygngr.banking.controller;
 
 import com.brkygngr.banking.dto.ExceptionResponse;
-import com.brkygngr.banking.dto.LoginUserRequest;
-import com.brkygngr.banking.dto.LoginUserResponse;
-import com.brkygngr.banking.dto.RegisterUserRequest;
-import com.brkygngr.banking.dto.RegisterUserResponse;
+import com.brkygngr.banking.dto.user.LoginUserRequest;
+import com.brkygngr.banking.dto.user.LoginUserResponse;
+import com.brkygngr.banking.dto.user.RegisterUserRequest;
+import com.brkygngr.banking.dto.user.RegisterUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +35,10 @@ public interface UserController {
                                       schema = @Schema(implementation = LoginUserResponse.class))),
       @ApiResponse(responseCode = "400",
                    description = "Failure response that returns request validation errors",
+                   content = @Content(mediaType = "application/json",
+                                      schema = @Schema(implementation = ExceptionResponse.class))),
+      @ApiResponse(responseCode = "404",
+                   description = "User not found",
                    content = @Content(mediaType = "application/json",
                                       schema = @Schema(implementation = ExceptionResponse.class)))
   })

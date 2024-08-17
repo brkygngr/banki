@@ -1,9 +1,9 @@
 package com.brkygngr.banking.controller;
 
-import com.brkygngr.banking.dto.LoginUserRequest;
-import com.brkygngr.banking.dto.LoginUserResponse;
-import com.brkygngr.banking.dto.RegisterUserRequest;
-import com.brkygngr.banking.dto.RegisterUserResponse;
+import com.brkygngr.banking.dto.user.LoginUserRequest;
+import com.brkygngr.banking.dto.user.LoginUserResponse;
+import com.brkygngr.banking.dto.user.RegisterUserRequest;
+import com.brkygngr.banking.dto.user.RegisterUserResponse;
 import com.brkygngr.banking.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

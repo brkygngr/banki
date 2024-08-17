@@ -10,10 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.brkygngr.banking.configuration.MessageConfig;
 import com.brkygngr.banking.configuration.SecurityConfig;
 import com.brkygngr.banking.dto.ExceptionResponse;
-import com.brkygngr.banking.dto.LoginUserRequest;
-import com.brkygngr.banking.dto.LoginUserResponse;
-import com.brkygngr.banking.dto.RegisterUserRequest;
-import com.brkygngr.banking.dto.RegisterUserResponse;
+import com.brkygngr.banking.dto.user.LoginUserRequest;
+import com.brkygngr.banking.dto.user.LoginUserResponse;
+import com.brkygngr.banking.dto.user.RegisterUserRequest;
+import com.brkygngr.banking.dto.user.RegisterUserResponse;
 import com.brkygngr.banking.exception.ExceptionCode;
 import com.brkygngr.banking.exception.UserAlreadyExistsException;
 import com.brkygngr.banking.exception.UserNotFoundException;

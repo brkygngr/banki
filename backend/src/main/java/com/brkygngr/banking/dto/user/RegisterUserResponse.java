@@ -1,4 +1,4 @@
-package com.brkygngr.banking.dto;
+package com.brkygngr.banking.dto.user;
 
 import java.util.UUID;
 

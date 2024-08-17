@@ -1,9 +1,9 @@
 package com.brkygngr.banking.service;
 
-import com.brkygngr.banking.dto.LoginUserRequest;
-import com.brkygngr.banking.dto.LoginUserResponse;
-import com.brkygngr.banking.dto.RegisterUserRequest;
-import com.brkygngr.banking.dto.RegisterUserResponse;
+import com.brkygngr.banking.dto.user.LoginUserRequest;
+import com.brkygngr.banking.dto.user.LoginUserResponse;
+import com.brkygngr.banking.dto.user.RegisterUserRequest;
+import com.brkygngr.banking.dto.user.RegisterUserResponse;
 
 public interface UserService {
 
