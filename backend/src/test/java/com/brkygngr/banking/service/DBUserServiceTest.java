@@ -9,9 +9,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.brkygngr.banking.dto.RegisterUserRequest;
+import com.brkygngr.banking.dto.RegisterUserResponse;
 import com.brkygngr.banking.entity.User;
 import com.brkygngr.banking.exception.UserAlreadyExistsException;
 import com.brkygngr.banking.repository.UserRepository;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -72,16 +74,21 @@ class DBUserServiceTest {
     }
 
     @Test
-    void givenUser_thenSavesUserToDB() {
+    void givenUser_whenUserIsSaved_thenReturnsUserId() {
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("username", "decryptedPassword",
           "existing_email@test.com");
+      
+      User saved = new User();
+      saved.setId(UUID.randomUUID());
 
       when(userRepository.existsByUsernameOrEmail(anyString(), anyString())).thenReturn(false);
       when(passwordEncoder.encode(registerUserRequest.password())).thenReturn("encryptedPassword");
+      when(userRepository.save(any(User.class))).thenReturn(saved);
 
-      dbUserService.registerUser(registerUserRequest);
+      RegisterUserResponse actual = dbUserService.registerUser(registerUserRequest);
 
       verify(userRepository).save(any(User.class));
+      assertEquals(actual.userId(), saved.getId());
     }
 
     @Test
@@ -91,8 +98,12 @@ class DBUserServiceTest {
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("username", "decryptedPassword",
           "existing_email@test.com");
 
+      User saved = new User();
+      saved.setId(UUID.randomUUID());
+
       when(userRepository.existsByUsernameOrEmail(anyString(), anyString())).thenReturn(false);
       when(passwordEncoder.encode(registerUserRequest.password())).thenReturn(encryptedPassword);
+      when(userRepository.save(any(User.class))).thenReturn(saved);
 
       dbUserService.registerUser(registerUserRequest);
 
