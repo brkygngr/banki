@@ -1,5 +1,7 @@
 package com.brkygngr.banking.controller;
 
+import com.brkygngr.banking.dto.LoginUserRequest;
+import com.brkygngr.banking.dto.LoginUserResponse;
 import com.brkygngr.banking.dto.RegisterUserRequest;
 import com.brkygngr.banking.dto.RegisterUserResponse;
 import com.brkygngr.banking.service.UserService;
@@ -22,5 +24,11 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<RegisterUserResponse> registerUser(
       @Valid @RequestBody final RegisterUserRequest registerUserRequest) {
     return ResponseEntity.ok(userService.registerUser(registerUserRequest));
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginUserResponse> loginUser(
+      @Valid @RequestBody final LoginUserRequest loginUserRequest) {
+    return ResponseEntity.ok(userService.loginUser(loginUserRequest));
   }
 }

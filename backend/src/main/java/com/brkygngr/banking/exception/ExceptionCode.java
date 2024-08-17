@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum ExceptionCode {
   INVALID_REQUEST("APP0001"),
-  USER_ALREADY_EXISTS("APP0002");
+  USER_ALREADY_EXISTS("APP0002"),
+  USER_NOT_FOUND("APP0003");
 
   private final String code;
 

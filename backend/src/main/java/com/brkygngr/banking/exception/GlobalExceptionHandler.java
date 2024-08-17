@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
                        schema = @Schema(implementation = ExceptionResponse.class)))
   })
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ExceptionResponse> handleBadRequest(final MethodArgumentNotValidException exception) {
+  public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValid(final MethodArgumentNotValidException exception) {
     String[] errors = exception.getBindingResult()
                                .getFieldErrors()
                                .stream()
@@ -50,13 +51,46 @@ public class GlobalExceptionHandler {
                        schema = @Schema(implementation = ExceptionResponse.class)))
   })
   @ExceptionHandler(UserAlreadyExistsException.class)
-  public ResponseEntity<ExceptionResponse> handleBadRequest(final UserAlreadyExistsException exception) {
+  public ResponseEntity<ExceptionResponse> handleUserAlreadyExists(final UserAlreadyExistsException exception) {
     String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
 
     return ResponseEntity.badRequest()
                          .body(new ExceptionResponse(LocalDateTime.now(),
                                                      ExceptionCode.USER_ALREADY_EXISTS,
                                                      new String[]{error}));
+  }
+
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "400",
+                   description = "User or password invalid",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
+  })
+  @ExceptionHandler(UserOrPasswordInvalidException.class)
+  public ResponseEntity<ExceptionResponse> handleUserOrPasswordInvalid(final UserOrPasswordInvalidException exception) {
+    String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
+
+    return ResponseEntity.badRequest()
+                         .body(new ExceptionResponse(LocalDateTime.now(),
+                                                     ExceptionCode.INVALID_REQUEST,
+                                                     new String[]{error}));
+  }
+
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "404",
+                   description = "User not found",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
+  })
+  @ExceptionHandler(UserNotFoundException.class)
+  public ResponseEntity<ExceptionResponse> handleUserNotFound(final UserNotFoundException exception) {
+    String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
+
+    return new ResponseEntity<>(new ExceptionResponse(LocalDateTime.now(),
+                                                      ExceptionCode.USER_NOT_FOUND,
+                                                      new String[]{error}), HttpStatus.NOT_FOUND);
   }
 
   @ApiResponses(value = {

@@ -10,13 +10,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.brkygngr.banking.configuration.MessageConfig;
 import com.brkygngr.banking.configuration.SecurityConfig;
 import com.brkygngr.banking.dto.ExceptionResponse;
+import com.brkygngr.banking.dto.LoginUserRequest;
+import com.brkygngr.banking.dto.LoginUserResponse;
 import com.brkygngr.banking.dto.RegisterUserRequest;
 import com.brkygngr.banking.dto.RegisterUserResponse;
 import com.brkygngr.banking.exception.ExceptionCode;
 import com.brkygngr.banking.exception.UserAlreadyExistsException;
+import com.brkygngr.banking.exception.UserNotFoundException;
 import com.brkygngr.banking.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Nested;
@@ -24,12 +28,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest({UserControllerImpl.class, SecurityConfig.class, MessageConfig.class})
 class UserControllerImplTest {
+
+  @Autowired
+  private MessageSource messageSource;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -59,7 +67,9 @@ class UserControllerImplTest {
                           .content(objectMapper.writeValueAsString(registerUserRequest)))
              .andExpect(status().isBadRequest())
              .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-             .andExpect(jsonPath("$.errors").value("Username is required!"));
+             .andExpect(jsonPath("$.errors").value(messageSource.getMessage("app.username.required",
+                                                                            null,
+                                                                            Locale.ENGLISH)));
     }
 
     @Test
@@ -81,16 +91,22 @@ class UserControllerImplTest {
                           .content(objectMapper.writeValueAsString(registerUserRequest)))
              .andExpect(status().isBadRequest())
              .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-             .andExpect(jsonPath("$.errors").value("Username must be shorter than 255 characters!"));
+             .andExpect(jsonPath("$.errors").value(messageSource.getMessage("app.username.size.invalid",
+                                                                            null,
+                                                                            Locale.ENGLISH)));
     }
 
     @Test
     void whenRequestDoesNotHavePassword_thenReturnsBadRequest() throws Exception {
-      String[] errors = Stream.of(
-                                  "Password must be longer than 8 and shorter than 255 characters!",
-                                  "Password is required!",
-                                  "Password must contain at least one digit, "
-                                      + "one lowercase letter, one uppercase letter, and one special character!")
+      String[] errors = Stream.of(messageSource.getMessage("app.password.size.invalid",
+                                                           null,
+                                                           Locale.ENGLISH),
+                                  messageSource.getMessage("app.password.required",
+                                                           null,
+                                                           Locale.ENGLISH),
+                                  messageSource.getMessage("app.password.pattern.invalid",
+                                                           null,
+                                                           Locale.ENGLISH))
                               .sorted()
                               .toArray(String[]::new);
 
@@ -118,7 +134,9 @@ class UserControllerImplTest {
 
     @Test
     void whenRequestPasswordIsShorterThan8_thenReturnsBadRequest() throws Exception {
-      String[] errors = {"Password must be longer than 8 and shorter than 255 characters!"};
+      String[] errors = {messageSource.getMessage("app.password.size.invalid",
+                                                  null,
+                                                  Locale.ENGLISH)};
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
           "username",
@@ -144,7 +162,9 @@ class UserControllerImplTest {
 
     @Test
     void whenRequestPasswordIsLongerThan255_thenReturnsBadRequest() throws Exception {
-      String[] errors = {"Password must be longer than 8 and shorter than 255 characters!"};
+      String[] errors = {messageSource.getMessage("app.password.size.invalid",
+                                                  null,
+                                                  Locale.ENGLISH)};
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
           "username",
@@ -173,10 +193,9 @@ class UserControllerImplTest {
 
     @Test
     void whenRequestPasswordDoesNotHaveAtLeastOneDigit_thenReturnsBadRequest() throws Exception {
-      String[] errors = {
-          "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special "
-              + "character!"
-      };
+      String[] errors = {messageSource.getMessage("app.password.pattern.invalid",
+                                                  null,
+                                                  Locale.ENGLISH)};
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
           "username",
@@ -203,8 +222,9 @@ class UserControllerImplTest {
     @Test
     void whenRequestPasswordDoesNotHaveAtLeastOneLowercaseChar_thenReturnsBadRequest() throws Exception {
       String[] errors = {
-          "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special "
-              + "character!"
+          messageSource.getMessage("app.password.pattern.invalid",
+                                   null,
+                                   Locale.ENGLISH)
       };
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
@@ -232,8 +252,9 @@ class UserControllerImplTest {
     @Test
     void whenRequestPasswordDoesNotHaveAtLeastOneUpperChar_thenReturnsBadRequest() throws Exception {
       String[] errors = {
-          "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special "
-              + "character!"
+          messageSource.getMessage("app.password.pattern.invalid",
+                                   null,
+                                   Locale.ENGLISH)
       };
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
@@ -261,8 +282,9 @@ class UserControllerImplTest {
     @Test
     void whenRequestPasswordDoesNotHaveAtLeastOneSpecialChar_thenReturnsBadRequest() throws Exception {
       String[] errors = {
-          "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special "
-              + "character!"
+          messageSource.getMessage("app.password.pattern.invalid",
+                                   null,
+                                   Locale.ENGLISH)
       };
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
@@ -290,7 +312,9 @@ class UserControllerImplTest {
     @Test
     void whenRequestEmailIsNull_thenReturnsBadRequest() throws Exception {
       String[] errors = {
-          "Email is required!"
+          messageSource.getMessage("app.email.required",
+                                   null,
+                                   Locale.ENGLISH)
       };
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
@@ -318,7 +342,9 @@ class UserControllerImplTest {
     @Test
     void whenRequestEmailUsesInvalidFormat_thenReturnsBadRequest() throws Exception {
       String[] errors = {
-          "Email must be a valid email address."
+          messageSource.getMessage("app.email.invalid",
+                                   null,
+                                   Locale.ENGLISH)
       };
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
@@ -346,7 +372,9 @@ class UserControllerImplTest {
     @Test
     void whenUserAlreadyRegistered_thenReturnsBadRequest() throws Exception {
       String[] errors = {
-          "User already exists!"
+          messageSource.getMessage("app.user.already.exists",
+                                   null,
+                                   Locale.ENGLISH)
       };
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
@@ -388,6 +416,99 @@ class UserControllerImplTest {
                           .content(objectMapper.writeValueAsString(registerUserRequest)))
              .andExpect(status().isOk())
              .andExpect(jsonPath("$.userId").value(registerUserResponse.userId().toString()));
+    }
+  }
+
+  @Nested
+  class LoginUser {
+
+    @Test
+    void whenRequestDoesNotHaveIdentifier_thenReturnsBadRequest() throws Exception {
+      LoginUserRequest loginUserRequest = new LoginUserRequest(
+          "Pa55word.",
+          ""
+      );
+
+      when(userService.loginUser(any(LoginUserRequest.class))).thenReturn(
+          new LoginUserResponse(""));
+
+      mockMvc.perform(post("/api/users/login")
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content(objectMapper.writeValueAsString(loginUserRequest)))
+             .andExpect(status().isBadRequest())
+             .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+             .andExpect(jsonPath("$.errors").value(messageSource.getMessage("app.identifier.required",
+                                                                            null,
+                                                                            Locale.ENGLISH)));
+    }
+
+    @Test
+    void whenRequestDoesNotHavePassword_thenReturnsBadRequest() throws Exception {
+      LoginUserRequest loginUserRequest = new LoginUserRequest(
+          "",
+          "identifier"
+      );
+
+      String[] errors = Stream.of(messageSource.getMessage("app.password.size.invalid",
+                                                           null,
+                                                           Locale.ENGLISH),
+                                  messageSource.getMessage("app.password.required",
+                                                           null,
+                                                           Locale.ENGLISH),
+                                  messageSource.getMessage("app.password.pattern.invalid",
+                                                           null,
+                                                           Locale.ENGLISH))
+                              .sorted()
+                              .toArray(String[]::new);
+
+      when(userService.loginUser(any(LoginUserRequest.class))).thenReturn(
+          new LoginUserResponse(""));
+
+      MvcResult mvcResult = mockMvc.perform(post("/api/users/login")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(loginUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andReturn();
+
+      ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                                                        ExceptionResponse.class);
+
+      assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
+    }
+
+    @Test
+    void whenUserDoesNotExists_thenReturnsNotFound() throws Exception {
+      LoginUserRequest loginUserRequest = new LoginUserRequest(
+          "aA12345678.",
+          "identifier"
+      );
+
+      when(userService.loginUser(any(LoginUserRequest.class))).thenThrow(UserNotFoundException.withDefaultMessage());
+
+      mockMvc.perform(post("/api/users/login")
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content(objectMapper.writeValueAsString(loginUserRequest)))
+             .andExpect(status().isNotFound())
+             .andExpect(jsonPath("$.code").value(ExceptionCode.USER_NOT_FOUND.getCode()))
+             .andExpect(jsonPath("$.errors").value(messageSource.getMessage("app.user.not.found",
+                                                                            null,
+                                                                            Locale.ENGLISH)));
+    }
+
+    @Test
+    void whenUserExists_thenReturnsToken() throws Exception {
+      LoginUserRequest loginUserRequest = new LoginUserRequest(
+          "aA12345678.",
+          "identifier"
+      );
+
+      when(userService.loginUser(any(LoginUserRequest.class))).thenReturn(new LoginUserResponse("access_token"));
+
+      mockMvc.perform(post("/api/users/login")
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content(objectMapper.writeValueAsString(loginUserRequest)))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.accessToken").value("access_token"));
     }
   }
 }
