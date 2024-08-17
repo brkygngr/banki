@@ -7,6 +7,6 @@ public class UserAlreadyExistsException extends RuntimeException {
   }
 
   public static UserAlreadyExistsException withDefaultMessage() {
-    return new UserAlreadyExistsException("User already exists!");
+    return new UserAlreadyExistsException("app.user.already.exists");
   }
 }
