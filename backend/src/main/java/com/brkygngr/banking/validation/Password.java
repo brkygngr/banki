@@ -21,11 +21,11 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = {})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
-@NotBlank(message = "{APP_PASSWORD_REQUIRED}")
-@Size(min = 8, max = 255, message = "{APP_PASSWORD_SIZE_INVALID}")
+@NotBlank(message = "{app.password.required}")
+@Size(min = 8, max = 255, message = "{app.password.size.invalid}")
 @Pattern(
     regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=,.]).*$",
-    message = "{APP_PASSWORD_PATTERN_INVALID}"
+    message = "{app.password.pattern.invalid}"
 )
 public @interface Password {
 

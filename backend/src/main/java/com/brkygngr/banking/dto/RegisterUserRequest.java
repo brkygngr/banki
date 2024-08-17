@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegisterUserRequest(
-    @NotBlank(message = "{APP_USERNAME_REQUIRED}")
-    @Size(max = 255, message = "{APP_USERNAME_SIZE_INVALID}")
+    @NotBlank(message = "{app.username.required}")
+    @Size(max = 255, message = "{app.username.size.invalid}")
     String username,
     @Password
     String password,
-    @NotBlank(message = "{APP_EMAIL_REQUIRED}")
-    @Email(message = "{APP_EMAIL_INVALID}")
+    @NotBlank(message = "{app.email.required}")
+    @Email(message = "{app.email.invalid}")
     String email
 ) {
 
