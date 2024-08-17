@@ -8,11 +8,16 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.brkygngr.banking.accessor.KeycloakAccessor;
+import com.brkygngr.banking.dto.LoginUserRequest;
 import com.brkygngr.banking.dto.RegisterUserRequest;
 import com.brkygngr.banking.dto.RegisterUserResponse;
 import com.brkygngr.banking.entity.User;
 import com.brkygngr.banking.exception.UserAlreadyExistsException;
+import com.brkygngr.banking.exception.UserNotFoundException;
+import com.brkygngr.banking.exception.UserOrPasswordInvalidException;
 import com.brkygngr.banking.repository.UserRepository;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +40,9 @@ class DBUserServiceTest {
   private UserRepository userRepository;
 
   @Mock
+  private KeycloakAccessor keycloakAccessor;
+
+  @Mock
   private PasswordEncoder passwordEncoder;
 
   private DBUserService dbUserService;
@@ -42,7 +50,7 @@ class DBUserServiceTest {
   @BeforeEach
   void setUp() {
     autoCloseable = MockitoAnnotations.openMocks(this);
-    dbUserService = new DBUserService(userRepository, passwordEncoder);
+    dbUserService = new DBUserService(userRepository, keycloakAccessor, passwordEncoder);
   }
 
   @AfterEach
@@ -77,7 +85,7 @@ class DBUserServiceTest {
     void givenUser_whenUserIsSaved_thenReturnsUserId() {
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("username", "decryptedPassword",
           "existing_email@test.com");
-      
+
       User saved = new User();
       saved.setId(UUID.randomUUID());
 
@@ -112,6 +120,32 @@ class DBUserServiceTest {
       User result = userArgumentCaptor.getValue();
 
       assertEquals(encryptedPassword, result.getPassword());
+    }
+  }
+
+  @Nested
+  class LoginUser {
+
+    @Test
+    void whenUserDoesNotExists_thenThrowsUserNotFoundException() {
+      LoginUserRequest loginUserRequest = new LoginUserRequest("password", "not found user");
+
+      when(userRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.empty());
+
+      assertThrows(UserNotFoundException.class, () -> dbUserService.loginUser(loginUserRequest));
+    }
+
+    @Test
+    void whenPasswordDoesNotMatch_thenThrowsUserNotFoundException() {
+      LoginUserRequest loginUserRequest = new LoginUserRequest("password", "user");
+
+      User existingUser = new User();
+      existingUser.setPassword("not matching password");
+
+      when(userRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.of(existingUser));
+      when(passwordEncoder.matches(loginUserRequest.password(), existingUser.getPassword())).thenReturn(false);
+
+      assertThrows(UserOrPasswordInvalidException.class, () -> dbUserService.loginUser(loginUserRequest));
     }
   }
 }

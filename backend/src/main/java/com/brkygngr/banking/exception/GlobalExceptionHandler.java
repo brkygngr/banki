@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -52,6 +54,23 @@ public class GlobalExceptionHandler {
     String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
 
     return ResponseEntity.badRequest()
+        .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.USER_ALREADY_EXISTS, new String[]{error}));
+  }
+
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "500",
+          description = "Unknown error",
+          content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ExceptionResponse.class)))
+  })
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ExceptionResponse> handleInternal(final Exception exception) {
+    log.error("Internal server error: ", exception);
+
+    String error = messageSource.getMessage("app.internal.server.error", null, Locale.ENGLISH);
+
+    return ResponseEntity.internalServerError()
         .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.USER_ALREADY_EXISTS, new String[]{error}));
   }
 }
