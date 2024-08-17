@@ -1,11 +1,11 @@
 package com.brkygngr.banking.service;
 
 import com.brkygngr.banking.accessor.KeycloakAccessor;
-import com.brkygngr.banking.dto.KeycloakTokenResponse;
 import com.brkygngr.banking.dto.LoginUserRequest;
 import com.brkygngr.banking.dto.LoginUserResponse;
 import com.brkygngr.banking.dto.RegisterUserRequest;
 import com.brkygngr.banking.dto.RegisterUserResponse;
+import com.brkygngr.banking.dto.keycloak.KeycloakTokenResponse;
 import com.brkygngr.banking.entity.User;
 import com.brkygngr.banking.exception.UserAlreadyExistsException;
 import com.brkygngr.banking.exception.UserNotFoundException;

@@ -10,9 +10,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.brkygngr.banking.dto.KeycloakClientResponse;
-import com.brkygngr.banking.dto.KeycloakRealmResponse;
-import com.brkygngr.banking.dto.KeycloakTokenResponse;
+import com.brkygngr.banking.dto.keycloak.KeycloakClientResponse;
+import com.brkygngr.banking.dto.keycloak.KeycloakRealmResponse;
+import com.brkygngr.banking.dto.keycloak.KeycloakTokenResponse;
 import com.brkygngr.banking.entity.User;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
