@@ -52,6 +52,6 @@ public class GlobalExceptionHandler {
     String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
 
     return ResponseEntity.badRequest()
-        .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.INVALID_REQUEST, new String[]{error}));
+        .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.USER_ALREADY_EXISTS, new String[]{error}));
   }
 }
