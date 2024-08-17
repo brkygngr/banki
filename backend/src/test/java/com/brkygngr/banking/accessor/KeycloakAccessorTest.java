@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -23,6 +24,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -186,5 +188,47 @@ class KeycloakAccessorTest {
     keycloakAccessor.postConstruct();
 
     verify(restTemplate, times(1)).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
+  }
+
+  @Test
+  void postConstruct_disablesKeycloakVerifyProfile() {
+    when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(KeycloakTokenResponse.class)))
+        .thenReturn(ResponseEntity.ok(new KeycloakTokenResponse("token", 1, "refresh_token", 2)));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+                               eq(KeycloakRealmResponse[].class)))
+        .thenReturn(ResponseEntity.ok(new KeycloakRealmResponse[]{new KeycloakRealmResponse("backend-realm")}));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+                               eq(KeycloakClientResponse[].class)))
+        .thenReturn(ResponseEntity.ok(new KeycloakClientResponse[]{new KeycloakClientResponse("backend-client")}));
+    when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
+        .thenReturn(ResponseEntity.ok().build());
+
+    HttpHeaders headers = new HttpHeaders();
+
+    Map<String, Object> verifyProfileMap = Map.of(
+        "alias", "VERIFY_PROFILE",
+        "name", "Verify Profile",
+        "providerId", "VERIFY_PROFILE",
+        "enabled", false,
+        "defaultAction", false,
+        "priority", 10,
+        "config", Map.of()
+    );
+
+    when(restTemplate.exchange(
+        anyString(),
+        eq(HttpMethod.PUT),
+        any(),
+        eq(Void.class)
+    )).thenReturn(ResponseEntity.noContent().build());
+
+    keycloakAccessor.postConstruct();
+
+    verify(restTemplate, times(1)).exchange(
+        anyString(),
+        eq(HttpMethod.PUT),
+        argThat(entity -> entity.getBody() != null && entity.getBody().equals(verifyProfileMap)),
+        eq(Void.class)
+    );
   }
 }
