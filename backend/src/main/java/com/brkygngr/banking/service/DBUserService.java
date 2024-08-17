@@ -38,7 +38,7 @@ public class DBUserService implements UserService {
     user.setUsername(request.username());
     user.setPassword(passwordEncoder.encode(request.password()));
 
-    String result = keycloakAccessor.registerUser(user);
+    keycloakAccessor.registerUser(user);
 
     User saved = userRepository.save(user);
 
