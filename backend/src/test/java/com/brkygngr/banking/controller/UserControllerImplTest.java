@@ -362,7 +362,7 @@ class UserControllerImplTest {
               .contentType(MediaType.APPLICATION_JSON)
               .content(objectMapper.writeValueAsString(registerUserRequest)))
           .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+          .andExpect(jsonPath("$.code").value(ExceptionCode.USER_ALREADY_EXISTS.getCode()))
           .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
