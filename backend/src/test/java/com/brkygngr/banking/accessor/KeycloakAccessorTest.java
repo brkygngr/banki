@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import com.brkygngr.banking.dto.KeycloakClientResponse;
 import com.brkygngr.banking.dto.KeycloakRealmResponse;
 import com.brkygngr.banking.dto.KeycloakTokenResponse;
@@ -110,10 +111,10 @@ class KeycloakAccessorTest {
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(KeycloakTokenResponse.class)))
         .thenReturn(ResponseEntity.ok(new KeycloakTokenResponse("token", 1, "refresh_token", 2)));
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakRealmResponse[].class)))
+                               eq(KeycloakRealmResponse[].class)))
         .thenReturn(ResponseEntity.ok(realms));
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakClientResponse[].class)))
+                               eq(KeycloakClientResponse[].class)))
         .thenReturn(ResponseEntity.ok(new KeycloakClientResponse[]{new KeycloakClientResponse("backend-client")}));
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
         .thenReturn(ResponseEntity.ok().build());
@@ -130,12 +131,12 @@ class KeycloakAccessorTest {
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(KeycloakTokenResponse.class)))
         .thenReturn(ResponseEntity.ok(new KeycloakTokenResponse("token", 1, "refresh_token", 2)));
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakRealmResponse[].class)))
+                               eq(KeycloakRealmResponse[].class)))
         .thenReturn(ResponseEntity.ok(realms));
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
         .thenReturn(ResponseEntity.ok().build());
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakClientResponse[].class)))
+                               eq(KeycloakClientResponse[].class)))
         .thenReturn(ResponseEntity.ok(new KeycloakClientResponse[]{new KeycloakClientResponse("backend-client")}));
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
         .thenReturn(ResponseEntity.ok().build());
@@ -152,12 +153,12 @@ class KeycloakAccessorTest {
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(KeycloakTokenResponse.class)))
         .thenReturn(ResponseEntity.ok(new KeycloakTokenResponse("token", 1, "refresh_token", 2)));
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakRealmResponse[].class)))
+                               eq(KeycloakRealmResponse[].class)))
         .thenReturn(ResponseEntity.ok(new KeycloakRealmResponse[]{new KeycloakRealmResponse("backend-realm")}));
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
         .thenReturn(ResponseEntity.ok().build());
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakClientResponse[].class)))
+                               eq(KeycloakClientResponse[].class)))
         .thenReturn(ResponseEntity.ok(clients));
 
     keycloakAccessor.postConstruct();
@@ -172,12 +173,12 @@ class KeycloakAccessorTest {
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(KeycloakTokenResponse.class)))
         .thenReturn(ResponseEntity.ok(new KeycloakTokenResponse("token", 1, "refresh_token", 2)));
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakRealmResponse[].class)))
+                               eq(KeycloakRealmResponse[].class)))
         .thenReturn(ResponseEntity.ok(new KeycloakRealmResponse[]{new KeycloakRealmResponse("backend-realm")}));
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
         .thenReturn(ResponseEntity.ok().build());
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
-        eq(KeycloakClientResponse[].class)))
+                               eq(KeycloakClientResponse[].class)))
         .thenReturn(ResponseEntity.ok(clients));
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class)))
         .thenReturn(ResponseEntity.ok().build());

@@ -89,7 +89,7 @@ public class KeycloakAccessor {
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(userTokenMap, headers);
 
     ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(postUserUrl, request,
-        KeycloakTokenResponse.class);
+                                                                                KeycloakTokenResponse.class);
 
     return response.getBody();
   }
@@ -229,7 +229,7 @@ public class KeycloakAccessor {
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(tokenFormBody, headers);
 
     ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(tokenUri, request,
-        KeycloakTokenResponse.class);
+                                                                                KeycloakTokenResponse.class);
 
     if (response.getBody() == null) {
       throw new KeycloakException("app.keycloak.admin.token.invalid");

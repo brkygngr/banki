@@ -15,13 +15,13 @@ public interface UserController {
   @Operation(summary = "Registers given user")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200",
-          description = "Successful response that returns registered user's id",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = RegisterUserResponse.class))),
+                   description = "Successful response that returns registered user's id",
+                   content = @Content(mediaType = "application/json",
+                                      schema = @Schema(implementation = RegisterUserResponse.class))),
       @ApiResponse(responseCode = "400",
-          description = "Failure response that returns request validation errors",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = ExceptionResponse.class)))
+                   description = "Failure response that returns request validation errors",
+                   content = @Content(mediaType = "application/json",
+                                      schema = @Schema(implementation = ExceptionResponse.class)))
   })
   public ResponseEntity<RegisterUserResponse> registerUser(RegisterUserRequest registerUserRequest);
 }

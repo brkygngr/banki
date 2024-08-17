@@ -48,7 +48,7 @@ public class DBUserService implements UserService {
   @Override
   public LoginUserResponse loginUser(final LoginUserRequest request) {
     User user = userRepository.findByUsernameOrEmail(request.identifier(), request.identifier())
-        .orElseThrow(UserNotFoundException::withDefaultMessage);
+                              .orElseThrow(UserNotFoundException::withDefaultMessage);
 
     if (!passwordEncoder.matches(request.password(), user.getPassword())) {
       throw UserOrPasswordInvalidException.withDefaultMessage();

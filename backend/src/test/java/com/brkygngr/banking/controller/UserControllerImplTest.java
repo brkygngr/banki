@@ -55,11 +55,11 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andExpect(jsonPath("$.errors").value("Username is required!"));
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content(objectMapper.writeValueAsString(registerUserRequest)))
+             .andExpect(status().isBadRequest())
+             .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+             .andExpect(jsonPath("$.errors").value("Username is required!"));
     }
 
     @Test
@@ -77,22 +77,22 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andExpect(jsonPath("$.errors").value("Username must be shorter than 255 characters!"));
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content(objectMapper.writeValueAsString(registerUserRequest)))
+             .andExpect(status().isBadRequest())
+             .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+             .andExpect(jsonPath("$.errors").value("Username must be shorter than 255 characters!"));
     }
 
     @Test
     void whenRequestDoesNotHavePassword_thenReturnsBadRequest() throws Exception {
       String[] errors = Stream.of(
-              "Password must be longer than 8 and shorter than 255 characters!",
-              "Password is required!",
-              "Password must contain at least one digit, "
-                  + "one lowercase letter, one uppercase letter, and one special character!")
-          .sorted()
-          .toArray(String[]::new);
+                                  "Password must be longer than 8 and shorter than 255 characters!",
+                                  "Password is required!",
+                                  "Password must contain at least one digit, "
+                                      + "one lowercase letter, one uppercase letter, and one special character!")
+                              .sorted()
+                              .toArray(String[]::new);
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest(
           "username",
@@ -104,14 +104,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -130,14 +130,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -159,14 +159,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -188,14 +188,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -217,14 +217,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -246,14 +246,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -275,14 +275,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -303,14 +303,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -331,14 +331,14 @@ class UserControllerImplTest {
           new RegisterUserResponse(UUID.randomUUID()));
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.INVALID_REQUEST.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -359,14 +359,14 @@ class UserControllerImplTest {
           UserAlreadyExistsException.withDefaultMessage());
 
       MvcResult mvcResult = mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.code").value(ExceptionCode.USER_ALREADY_EXISTS.getCode()))
-          .andReturn();
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(registerUserRequest)))
+                                   .andExpect(status().isBadRequest())
+                                   .andExpect(jsonPath("$.code").value(ExceptionCode.USER_ALREADY_EXISTS.getCode()))
+                                   .andReturn();
 
       ExceptionResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-          ExceptionResponse.class);
+                                                        ExceptionResponse.class);
 
       assertArrayEquals(errors, Arrays.stream(result.errors()).sorted().toArray(String[]::new));
     }
@@ -384,10 +384,10 @@ class UserControllerImplTest {
       when(userService.registerUser(any(RegisterUserRequest.class))).thenReturn(registerUserResponse);
 
       mockMvc.perform(post("/api/users/register")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(registerUserRequest)))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$.userId").value(registerUserResponse.userId().toString()));
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content(objectMapper.writeValueAsString(registerUserRequest)))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.userId").value(registerUserResponse.userId().toString()));
     }
   }
 }

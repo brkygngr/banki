@@ -25,44 +25,46 @@ public class GlobalExceptionHandler {
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "400",
-          description = "Request validation errors",
-          content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = ExceptionResponse.class)))
+                   description = "Request validation errors",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
   })
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ExceptionResponse> handleBadRequest(final MethodArgumentNotValidException exception) {
     String[] errors = exception.getBindingResult()
-        .getFieldErrors()
-        .stream()
-        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-        .toArray(String[]::new);
+                               .getFieldErrors()
+                               .stream()
+                               .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                               .toArray(String[]::new);
 
     return ResponseEntity.badRequest()
-        .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.INVALID_REQUEST, errors));
+                         .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.INVALID_REQUEST, errors));
   }
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "400",
-          description = "User already exists",
-          content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = ExceptionResponse.class)))
+                   description = "User already exists",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
   })
   @ExceptionHandler(UserAlreadyExistsException.class)
   public ResponseEntity<ExceptionResponse> handleBadRequest(final UserAlreadyExistsException exception) {
     String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
 
     return ResponseEntity.badRequest()
-        .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.USER_ALREADY_EXISTS, new String[]{error}));
+                         .body(new ExceptionResponse(LocalDateTime.now(),
+                                                     ExceptionCode.USER_ALREADY_EXISTS,
+                                                     new String[]{error}));
   }
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "500",
-          description = "Unknown error",
-          content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = ExceptionResponse.class)))
+                   description = "Unknown error",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
   })
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ExceptionResponse> handleInternal(final Exception exception) {
@@ -71,6 +73,8 @@ public class GlobalExceptionHandler {
     String error = messageSource.getMessage("app.internal.server.error", null, Locale.ENGLISH);
 
     return ResponseEntity.internalServerError()
-        .body(new ExceptionResponse(LocalDateTime.now(), ExceptionCode.USER_ALREADY_EXISTS, new String[]{error}));
+                         .body(new ExceptionResponse(LocalDateTime.now(),
+                                                     ExceptionCode.USER_ALREADY_EXISTS,
+                                                     new String[]{error}));
   }
 }

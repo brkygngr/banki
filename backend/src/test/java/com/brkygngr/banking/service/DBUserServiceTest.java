@@ -9,7 +9,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.brkygngr.banking.accessor.KeycloakAccessor;
+import com.brkygngr.banking.dto.KeycloakTokenResponse;
 import com.brkygngr.banking.dto.LoginUserRequest;
+import com.brkygngr.banking.dto.LoginUserResponse;
 import com.brkygngr.banking.dto.RegisterUserRequest;
 import com.brkygngr.banking.dto.RegisterUserResponse;
 import com.brkygngr.banking.entity.User;
@@ -64,7 +66,7 @@ class DBUserServiceTest {
     @Test
     void whenUsernameAlreadyExists_thenThrowsUserAlreadyExistsException() {
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("existing_username", "password",
-          "test@test.com");
+                                                                        "test@test.com");
 
       when(userRepository.existsByUsernameOrEmail(eq(registerUserRequest.username()), anyString())).thenReturn(true);
 
@@ -74,7 +76,7 @@ class DBUserServiceTest {
     @Test
     void whenEmailAlreadyExists_thenThrowsUserAlreadyExistsException() {
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("username", "password",
-          "existing_email@test.com");
+                                                                        "existing_email@test.com");
 
       when(userRepository.existsByUsernameOrEmail(anyString(), eq(registerUserRequest.email()))).thenReturn(true);
 
@@ -84,7 +86,7 @@ class DBUserServiceTest {
     @Test
     void givenUser_whenUserIsSaved_thenReturnsUserId() {
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("username", "decryptedPassword",
-          "existing_email@test.com");
+                                                                        "existing_email@test.com");
 
       User saved = new User();
       saved.setId(UUID.randomUUID());
@@ -104,7 +106,7 @@ class DBUserServiceTest {
       String encryptedPassword = "encryptedPassword";
 
       RegisterUserRequest registerUserRequest = new RegisterUserRequest("username", "decryptedPassword",
-          "existing_email@test.com");
+                                                                        "existing_email@test.com");
 
       User saved = new User();
       saved.setId(UUID.randomUUID());
@@ -146,6 +148,26 @@ class DBUserServiceTest {
       when(passwordEncoder.matches(loginUserRequest.password(), existingUser.getPassword())).thenReturn(false);
 
       assertThrows(UserOrPasswordInvalidException.class, () -> dbUserService.loginUser(loginUserRequest));
+    }
+
+    @Test
+    void whenUserExists_thenReturnsAccessToken() {
+      User existingUser = new User();
+      existingUser.setId(UUID.randomUUID());
+      existingUser.setUsername("user");
+      existingUser.setPassword("password");
+
+      LoginUserRequest loginUserRequest = new LoginUserRequest("password", "user");
+
+      KeycloakTokenResponse expectedToken = new KeycloakTokenResponse("access_token", 1, "refresh_token", 2);
+
+      when(userRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.of(existingUser));
+      when(passwordEncoder.matches(loginUserRequest.password(), existingUser.getPassword())).thenReturn(true);
+      when(keycloakAccessor.loginUser(existingUser)).thenReturn(expectedToken);
+
+      LoginUserResponse result = dbUserService.loginUser(loginUserRequest);
+
+      assertEquals(expectedToken.accessToken(), result.accessToken());
     }
   }
 }
