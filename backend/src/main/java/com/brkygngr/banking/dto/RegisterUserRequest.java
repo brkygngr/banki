@@ -11,6 +11,7 @@ public record RegisterUserRequest(
     String username,
     @Password
     String password,
+    @NotBlank(message = "{APP_EMAIL_REQUIRED}")
     @Email(message = "{APP_EMAIL_INVALID}")
     String email
 ) {
