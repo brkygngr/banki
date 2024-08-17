@@ -14,6 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+  private static final String[] UNAUTHORIZED_ENDPOINTS = {
+      "/swagger-ui/**",
+      "/v3/api-docs/**",
+      "/api/users/register",
+      "/api/users/login"};
+
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
@@ -21,15 +27,12 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/users/register", "/api/users/login").permitAll()
-            .anyRequest().authenticated()
-        )
-        .oauth2ResourceServer(oauth2 -> oauth2
-            .jwt(Customizer.withDefaults())
-        );
+    http.csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(authorize -> authorize.requestMatchers(UNAUTHORIZED_ENDPOINTS)
+                                                     .permitAll()
+                                                     .anyRequest()
+                                                     .authenticated())
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
     return http.build();
   }
