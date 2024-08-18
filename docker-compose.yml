@@ -13,8 +13,8 @@ services:
     restart: always
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=${APP_DB_NAME} --host=app_postgres_db --port=5432 --username=${APP_DB_USERNAME}" ]
-      interval: 12s
-      timeout: 12s
+      interval: 30s
+      timeout: 15s
       retries: 3
     networks:
       - docker_network
@@ -32,8 +32,8 @@ services:
     restart: always
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=${KEYCLOAK_DB_NAME} --host=keycloak_postgres_db --port=5432 --username=${KEYCLOAK_DB_USERNAME}" ]
-      interval: 12s
-      timeout: 12s
+      interval: 30s
+      timeout: 15s
       retries: 3
     networks:
       - docker_network
