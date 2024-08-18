@@ -34,12 +34,13 @@ interface UpdateAccountRequest {
   name: string;
 }
 
-interface DeleteAccountRequest {
+export interface DeleteAccountRequest {
   id: string;
 }
 
 export const accountApi = createApi({
   reducerPath: 'accountApi',
+  tagTypes: ['Accounts'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_DOMAIN + '/accounts',
     prepareHeaders: (headers, { getState }) => {
@@ -59,11 +60,13 @@ export const accountApi = createApi({
         method: 'POST',
         body: request,
       }),
+      invalidatesTags: ["Accounts"]
     }),
     getAccounts: builder.query<GetAccountsResponse, GetAccountsParams>({
       query: (search) => {
         return `?number=${search.number ?? ""}&name=${search.name ?? ""}`;
       },
+      providesTags: ["Accounts"]
     }),
     getAccount: builder.query<Account, GetAccountRequest>({
       query: ({ id }) => `/${id}`,
@@ -76,10 +79,11 @@ export const accountApi = createApi({
       }),
     }),
     deleteAccount: builder.mutation<void, DeleteAccountRequest>({
-      query: (id) => ({
-        url: `/${id}`,
+      query: (request) => ({
+        url: `/${request.id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ["Accounts"]
     }),
   }),
 });

@@ -1,5 +1,5 @@
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
-import { Account, CreateAccountRequest, GetAccountsParams } from "../../services/account/accountApi";
+import { Account, CreateAccountRequest, DeleteAccountRequest, GetAccountsParams } from "../../services/account/accountApi";
 import { AccountTable } from "./AccountTable";
 import { Pageable } from "../../models/Pageable";
 import { FormEvent, useState } from "react";
@@ -12,11 +12,12 @@ library.add(faCirclePlus, faMagnifyingGlass);
 
 interface AccountsProps {
   accountPage: Pageable<Account>;
-  onCreate: (payload: CreateAccountRequest) => Promise<void>;
+  onCreate: (request: CreateAccountRequest) => Promise<void>;
   onSearch: (params: GetAccountsParams) => Promise<void>;
+  onDelete: (request: DeleteAccountRequest) => Promise<void>;
 }
 
-export function Accounts({ accountPage, onCreate, onSearch }: AccountsProps) {
+export function Accounts({ accountPage, onCreate, onSearch, onDelete }: AccountsProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [newAccountName, setNewAccountName] = useState('');
@@ -43,10 +44,6 @@ export function Accounts({ accountPage, onCreate, onSearch }: AccountsProps) {
     const number = searchParams.get("number") ?? undefined;
     const name = searchParams.get("name") ?? undefined;
 
-    if (!number && !name) {
-      return;
-    }
-
     await onSearch({ number, name })
   }
 
@@ -54,6 +51,10 @@ export function Accounts({ accountPage, onCreate, onSearch }: AccountsProps) {
     e.preventDefault();
 
     await onCreate({ name: newAccountName });
+  }
+
+  const handleDelete = async (account: Account) => {
+    await onDelete({ id: account.id });
   }
 
   return (
@@ -96,7 +97,7 @@ export function Accounts({ accountPage, onCreate, onSearch }: AccountsProps) {
           </Form>
         </Col>
       </Row>
-      <AccountTable pageable={accountPage} />
+      <AccountTable pageable={accountPage} onDelete={handleDelete} />
     </Container>
   )
 }

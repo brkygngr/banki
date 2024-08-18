@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { emptyPageable } from "../../models/Pageable";
-import { CreateAccountRequest, GetAccountsParams, useCreateAccountMutation, useGetAccountsQuery } from "../../services/account/accountApi";
+import { CreateAccountRequest, DeleteAccountRequest, GetAccountsParams, useCreateAccountMutation, useDeleteAccountMutation, useGetAccountsQuery } from "../../services/account/accountApi";
 import { Accounts } from "./Accounts";
 
 export function AccountsContainer() {
@@ -9,20 +9,21 @@ export function AccountsContainer() {
   const getAccounts = useGetAccountsQuery(getAccountParams);
 
   const [createAccount] = useCreateAccountMutation();
+  const [deleteAccount] = useDeleteAccountMutation();
 
   const data = getAccounts.data ?? emptyPageable();
 
-  const handleCreate = async (payload: CreateAccountRequest) => {
-    await createAccount(payload);
+  const handleCreate = async (request: CreateAccountRequest) => {
+    await createAccount(request);
   }
 
   const handleSearch = async (params: GetAccountsParams) => {
-    if (!params.name && !params.number) {
-      return;
-    }
-
     setGetAccountParams(params);
   }
+
+  const handleDelete = async (request: DeleteAccountRequest) => {
+    await deleteAccount(request);
+  }
   
-  return <Accounts accountPage={data} onCreate={handleCreate} onSearch={handleSearch} />;
+  return <Accounts accountPage={data} onCreate={handleCreate} onSearch={handleSearch} onDelete={handleDelete} />;
 }
