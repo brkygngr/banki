@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCirclePlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams } from 'react-router-dom';
+import { TransferMoneySection } from '../transaction/TransferMoneySection';
+import { TransferMoneyRequest } from '../../services/transaction/transactionApi';
 
 library.add(faCirclePlus, faMagnifyingGlass);
 
@@ -22,9 +24,17 @@ interface AccountsProps {
   onSearch: (params: GetAccountsParams) => Promise<void>;
   onEdit: (request: UpdateAccountRequest) => Promise<void>;
   onDelete: (request: DeleteAccountRequest) => Promise<void>;
+  onSend: (request: TransferMoneyRequest) => Promise<void>;
 }
 
-export function Accounts({ accountPage, onCreate, onSearch, onEdit, onDelete }: AccountsProps) {
+export function Accounts({
+  accountPage,
+  onCreate,
+  onSearch,
+  onEdit,
+  onDelete,
+  onSend,
+}: AccountsProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [newAccountName, setNewAccountName] = useState('');
@@ -68,10 +78,14 @@ export function Accounts({ accountPage, onCreate, onSearch, onEdit, onDelete }: 
     await onDelete({ id: account.id });
   };
 
+  const handleSend = async (request: TransferMoneyRequest) => {
+    await onSend(request);
+  };
+
   return (
     <Container className="my-3">
       <Row className="justify-content-between">
-        <Col xs={12} md={5}>
+        <Col xs={12} md={6}>
           <Form onSubmit={handleCreateSubmit}>
             <InputGroup className="mb-3">
               <InputGroup.Text>New account</InputGroup.Text>
@@ -90,7 +104,7 @@ export function Accounts({ accountPage, onCreate, onSearch, onEdit, onDelete }: 
             </InputGroup>
           </Form>
         </Col>
-        <Col xs={12} md={5}>
+        <Col xs={12} md={6}>
           <Form onSubmit={handleSearchSubmit}>
             <InputGroup className="mb-3">
               <InputGroup.Text>Account</InputGroup.Text>
@@ -111,6 +125,11 @@ export function Accounts({ accountPage, onCreate, onSearch, onEdit, onDelete }: 
               </Button>
             </InputGroup>
           </Form>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <TransferMoneySection accounts={accountPage.content} onSend={handleSend} />
         </Col>
       </Row>
       <AccountTable pageable={accountPage} onEdit={handleEdit} onDelete={handleDelete} />

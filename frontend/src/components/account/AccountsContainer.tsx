@@ -11,6 +11,10 @@ import {
   useUpdateAccountMutation,
 } from '../../services/account/accountApi';
 import { Accounts } from './Accounts';
+import {
+  TransferMoneyRequest,
+  useTransferMoneyMutation,
+} from '../../services/transaction/transactionApi';
 
 export function AccountsContainer() {
   const [getAccountParams, setGetAccountParams] = useState<GetAccountsParams>({});
@@ -20,6 +24,7 @@ export function AccountsContainer() {
   const [createAccount] = useCreateAccountMutation();
   const [deleteAccount] = useDeleteAccountMutation();
   const [updateAccount] = useUpdateAccountMutation();
+  const [transferMoney] = useTransferMoneyMutation();
 
   const data = getAccounts.data ?? emptyPageable();
 
@@ -39,6 +44,12 @@ export function AccountsContainer() {
     await updateAccount(request);
   };
 
+  const handleSend = async (request: TransferMoneyRequest) => {
+    await transferMoney(request);
+
+    await getAccounts.refetch();
+  };
+
   return (
     <Accounts
       accountPage={data}
@@ -46,6 +57,7 @@ export function AccountsContainer() {
       onSearch={handleSearch}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onSend={handleSend}
     />
   );
 }
