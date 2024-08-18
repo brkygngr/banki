@@ -21,12 +21,14 @@ public class UserControllerImpl implements UserController {
   private final UserService userService;
 
   @PostMapping("/register")
+  @Override
   public ResponseEntity<RegisterUserResponse> registerUser(
       @Valid @RequestBody final RegisterUserRequest registerUserRequest) {
     return ResponseEntity.ok(userService.registerUser(registerUserRequest));
   }
 
   @PostMapping("/login")
+  @Override
   public ResponseEntity<LoginUserResponse> loginUser(
       @Valid @RequestBody final LoginUserRequest loginUserRequest) {
     return ResponseEntity.ok(userService.loginUser(loginUserRequest));
