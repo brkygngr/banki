@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "400",
-                   description = "Request validation errors",
+                   description = "Request validation errors.",
                    content = @Content(
                        mediaType = "application/json",
                        schema = @Schema(implementation = ExceptionResponse.class)))
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "400",
-                   description = "User already exists",
+                   description = "User already exists.",
                    content = @Content(
                        mediaType = "application/json",
                        schema = @Schema(implementation = ExceptionResponse.class)))
@@ -62,7 +63,7 @@ public class GlobalExceptionHandler {
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "400",
-                   description = "User or password invalid",
+                   description = "User or password invalid.",
                    content = @Content(
                        mediaType = "application/json",
                        schema = @Schema(implementation = ExceptionResponse.class)))
@@ -79,7 +80,7 @@ public class GlobalExceptionHandler {
 
   @ApiResponses(value = {
       @ApiResponse(responseCode = "404",
-                   description = "User not found",
+                   description = "User not found.",
                    content = @Content(
                        mediaType = "application/json",
                        schema = @Schema(implementation = ExceptionResponse.class)))
@@ -94,8 +95,42 @@ public class GlobalExceptionHandler {
   }
 
   @ApiResponses(value = {
+      @ApiResponse(responseCode = "404",
+                   description = "Account not found.",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
+  })
+  @ExceptionHandler(AccountNotFoundException.class)
+  public ResponseEntity<ExceptionResponse> handleAccountNotFound(final AccountNotFoundException exception) {
+    String error = messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH);
+
+    return new ResponseEntity<>(new ExceptionResponse(LocalDateTime.now(),
+                                                      ExceptionCode.USER_NOT_FOUND,
+                                                      new String[]{error}),
+                                HttpStatus.NOT_FOUND);
+  }
+
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "400",
+                   description = "Data values are already taken.",
+                   content = @Content(
+                       mediaType = "application/json",
+                       schema = @Schema(implementation = ExceptionResponse.class)))
+  })
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ExceptionResponse> handleDataIntegrityViolation(final DataIntegrityViolationException exception) {
+    String error = messageSource.getMessage("app.resource.already.exists", null, Locale.ENGLISH);
+
+    return ResponseEntity.badRequest()
+                         .body(new ExceptionResponse(LocalDateTime.now(),
+                                                     ExceptionCode.RESOURCE_ALREADY_EXISTS,
+                                                     new String[]{error}));
+  }
+
+  @ApiResponses(value = {
       @ApiResponse(responseCode = "500",
-                   description = "Unknown error",
+                   description = "Unknown error.",
                    content = @Content(
                        mediaType = "application/json",
                        schema = @Schema(implementation = ExceptionResponse.class)))
