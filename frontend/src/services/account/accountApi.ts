@@ -29,7 +29,7 @@ export interface CreateAccountRequest {
   name: string;
 }
 
-interface UpdateAccountRequest {
+export interface UpdateAccountRequest {
   id: string;
   name: string;
 }
@@ -77,6 +77,7 @@ export const accountApi = createApi({
         method: 'PUT',
         body: rest,
       }),
+      invalidatesTags: ["Accounts"]
     }),
     deleteAccount: builder.mutation<void, DeleteAccountRequest>({
       query: (request) => ({

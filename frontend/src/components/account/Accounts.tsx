@@ -1,5 +1,5 @@
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
-import { Account, CreateAccountRequest, DeleteAccountRequest, GetAccountsParams } from "../../services/account/accountApi";
+import { Account, CreateAccountRequest, DeleteAccountRequest, GetAccountsParams, UpdateAccountRequest } from "../../services/account/accountApi";
 import { AccountTable } from "./AccountTable";
 import { Pageable } from "../../models/Pageable";
 import { FormEvent, useState } from "react";
@@ -14,10 +14,11 @@ interface AccountsProps {
   accountPage: Pageable<Account>;
   onCreate: (request: CreateAccountRequest) => Promise<void>;
   onSearch: (params: GetAccountsParams) => Promise<void>;
+  onEdit: (request: UpdateAccountRequest) => Promise<void>;
   onDelete: (request: DeleteAccountRequest) => Promise<void>;
 }
 
-export function Accounts({ accountPage, onCreate, onSearch, onDelete }: AccountsProps) {
+export function Accounts({ accountPage, onCreate, onSearch, onEdit, onDelete }: AccountsProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [newAccountName, setNewAccountName] = useState('');
@@ -51,6 +52,10 @@ export function Accounts({ accountPage, onCreate, onSearch, onDelete }: Accounts
     e.preventDefault();
 
     await onCreate({ name: newAccountName });
+  }
+
+  const handleEdit = async (account: Account, newName: string) => {
+    await onEdit({ id: account.id, name: newName });
   }
 
   const handleDelete = async (account: Account) => {
@@ -97,7 +102,7 @@ export function Accounts({ accountPage, onCreate, onSearch, onDelete }: Accounts
           </Form>
         </Col>
       </Row>
-      <AccountTable pageable={accountPage} onDelete={handleDelete} />
+      <AccountTable pageable={accountPage} onEdit={handleEdit} onDelete={handleDelete} />
     </Container>
   )
 }
