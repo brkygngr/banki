@@ -16,8 +16,8 @@ export function RegisterForm({ isRegistering, onRegister, navigate }: RegisterFo
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
-    await onRegister({ username, email, password })
+
+    await onRegister({ username, email, password });
 
     navigate('/login');
   };
@@ -69,4 +69,4 @@ export function RegisterForm({ isRegistering, onRegister, navigate }: RegisterFo
       </Row>
     </Container>
   );
-};
+}

@@ -15,7 +15,7 @@ export interface GetAccountsParams {
   name?: string;
 }
 
-interface GetAccountsResponse extends Pageable<Account> { }
+interface GetAccountsResponse extends Pageable<Account> {}
 
 interface GetAccountRequest {
   id: string;
@@ -32,6 +32,7 @@ export interface CreateAccountRequest {
 export interface UpdateAccountRequest {
   id: string;
   name: string;
+  balance: number;
 }
 
 export interface DeleteAccountRequest {
@@ -60,13 +61,13 @@ export const accountApi = createApi({
         method: 'POST',
         body: request,
       }),
-      invalidatesTags: ["Accounts"]
+      invalidatesTags: ['Accounts'],
     }),
     getAccounts: builder.query<GetAccountsResponse, GetAccountsParams>({
       query: (search) => {
-        return `?number=${search.number ?? ""}&name=${search.name ?? ""}`;
+        return `?number=${search.number ?? ''}&name=${search.name ?? ''}`;
       },
-      providesTags: ["Accounts"]
+      providesTags: ['Accounts'],
     }),
     getAccount: builder.query<Account, GetAccountRequest>({
       query: ({ id }) => `/${id}`,
@@ -77,14 +78,14 @@ export const accountApi = createApi({
         method: 'PUT',
         body: rest,
       }),
-      invalidatesTags: ["Accounts"]
+      invalidatesTags: ['Accounts'],
     }),
     deleteAccount: builder.mutation<void, DeleteAccountRequest>({
       query: (request) => ({
         url: `/${request.id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ["Accounts"]
+      invalidatesTags: ['Accounts'],
     }),
   }),
 });

@@ -9,11 +9,7 @@ interface LoginFormProps {
   navigate: NavigateFunction;
 }
 
-export function LoginForm({
-  isLogging,
-  onLogin,
-  navigate,
-}: LoginFormProps) {
+export function LoginForm({ isLogging, onLogin, navigate }: LoginFormProps) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
 
@@ -56,11 +52,11 @@ export function LoginForm({
             </Button>
 
             <p>
-              Don't have an account yet? <Link to="/register">Register here</Link>
+              Don&apos;t have an account yet? <Link to="/register">Register here</Link>
             </p>
           </Form>
         </Col>
       </Row>
     </Container>
   );
-};
+}

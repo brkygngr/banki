@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppToastType } from "../../components/toast/AppToast";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppToastType } from '../../components/toast/AppToast';
 
 export interface ErrorMessage {
   header: string;
@@ -21,17 +21,30 @@ export const authSlice = createSlice({
   name: 'error',
   initialState,
   reducers: {
-    showToast: (state, action: PayloadAction<{ message: string, durationMS: number, type: AppToastType, header: string }>) => {
+    showToast: (
+      state,
+      action: PayloadAction<{
+        message: string;
+        durationMS: number;
+        type: AppToastType;
+        header: string;
+      }>
+    ) => {
       state.messages.push({
-        message: action.payload.message, durationMS: action.payload.durationMS, timestamp: Date.now(), type: action.payload.type,
-        header: action.payload.header
-      })
+        message: action.payload.message,
+        durationMS: action.payload.durationMS,
+        timestamp: Date.now(),
+        type: action.payload.type,
+        header: action.payload.header,
+      });
     },
     deleteMessage: (state, action: PayloadAction<{ message: ErrorMessage }>) => {
-      const index = state.messages.findIndex((message) => message.timestamp === action.payload.message.timestamp);
+      const index = state.messages.findIndex(
+        (message) => message.timestamp === action.payload.message.timestamp
+      );
 
       state.messages.splice(index, 1);
-    }
+    },
   },
 });
 

@@ -13,5 +13,5 @@ export function emptyPageable<T>(): Pageable<T> {
     size: 0,
     content: [],
     number: 0,
-  }
+  };
 }

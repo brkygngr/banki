@@ -1,26 +1,26 @@
-import { IconProp, library } from "@fortawesome/fontawesome-svg-core";
-import { faCircleXmark, faThumbsUp, faWarning } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Toast } from "react-bootstrap";
+import { IconProp, library } from '@fortawesome/fontawesome-svg-core';
+import { faCircleXmark, faThumbsUp, faWarning } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Toast } from 'react-bootstrap';
 
-library.add(faThumbsUp, faWarning, faCircleXmark)
+library.add(faThumbsUp, faWarning, faCircleXmark);
 
 const iconMap: Record<AppToastType, IconProp> = {
-  "success": "thumbs-up",
-  "warning": "warning",
-  "failure": "circle-xmark"
-}
+  success: 'thumbs-up',
+  warning: 'warning',
+  failure: 'circle-xmark',
+};
 
 const timeMap: Record<number, string> = {
-  60: "seconds",
-  3600: "minutes",
-  86400: "hours",
-}
+  60: 'seconds',
+  3600: 'minutes',
+  86400: 'hours',
+};
 
 export const enum AppToastType {
-  SUCCESS = "success",
-  WARNING = "warning",
-  FAILURE = "failure"
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  FAILURE = 'failure',
 }
 
 interface AppToastProps {
@@ -43,7 +43,7 @@ function pastTimeType(timestamp: Date): string {
     }
   }
 
-  return "days";
+  return 'days';
 }
 
 export function AppToast({ header, message, timestamp, type, durationMS, onClose }: AppToastProps) {

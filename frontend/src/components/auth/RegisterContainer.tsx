@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import { RegisterRequest, useRegisterMutation } from "../../services/auth/authApi";
-import { RegisterForm } from "./RegisterForm";
+import { useNavigate } from 'react-router-dom';
+import { RegisterRequest, useRegisterMutation } from '../../services/auth/authApi';
+import { RegisterForm } from './RegisterForm';
 
 export function RegisterContainer() {
   const [register, { isLoading }] = useRegisterMutation();
@@ -9,7 +9,7 @@ export function RegisterContainer() {
 
   const handleRegister = async (request: RegisterRequest) => {
     await register(request);
-  }
+  };
 
-  return <RegisterForm onRegister={handleRegister} isRegistering={isLoading} navigate={navigate} />
+  return <RegisterForm onRegister={handleRegister} isRegistering={isLoading} navigate={navigate} />;
 }
