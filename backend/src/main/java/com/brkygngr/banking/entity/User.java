@@ -12,13 +12,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "app_user")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = {"accountList", "createdAt", "updatedAt"})
+@EqualsAndHashCode(exclude = {"accountList", "password", "createdAt", "updatedAt"})
 public class User {
 
   @Id

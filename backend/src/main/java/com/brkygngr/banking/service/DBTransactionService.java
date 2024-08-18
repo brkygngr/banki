@@ -18,10 +18,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DBTransactionService implements TransactionService {
@@ -37,32 +39,48 @@ public class DBTransactionService implements TransactionService {
   @Transactional
   @Override
   public TransferMoneyResponse transferMoney(final String username, final TransferMoneyRequest transferMoneyRequest) {
-    User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::withDefaultMessage);
+    final User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::withDefaultMessage);
 
-    List<Account> accountList = accountRepository.findAllByIdInAndUser(List.of(transferMoneyRequest.from(),
-                                                                               transferMoneyRequest.to()), user);
+    log.info("User#{} is transferring {} from {} to {}",
+             user.getId(),
+             transferMoneyRequest.amount(),
+             transferMoneyRequest.from(),
+             transferMoneyRequest.to());
+
+    final List<Account> accountList = accountRepository.findAllByIdInAndUser(List.of(transferMoneyRequest.from(),
+                                                                                     transferMoneyRequest.to()), user);
 
     if (accountList.size() != 2) {
+      log.warn("User#{} accounts {} {} not found!",
+               user.getId(),
+               transferMoneyRequest.from(),
+               transferMoneyRequest.to());
+
       throw AccountNotFoundException.withDefaultMessage();
     }
 
-    Account from = accountList.stream()
-                              .filter(account -> account.getId().equals(transferMoneyRequest.from()))
-                              .toList()
-                              .getFirst();
+    final Account from = accountList.stream()
+                                    .filter(account -> account.getId().equals(transferMoneyRequest.from()))
+                                    .toList()
+                                    .getFirst();
 
-    Account to = accountList.stream()
-                            .filter(account -> account.getId().equals(transferMoneyRequest.to()))
-                            .toList()
-                            .getFirst();
+    final Account to = accountList.stream()
+                                  .filter(account -> account.getId().equals(transferMoneyRequest.to()))
+                                  .toList()
+                                  .getFirst();
 
-    Transaction transaction = new Transaction();
+    final Transaction transaction = new Transaction();
     transaction.setFrom(from);
-    transaction.setFrom(to);
+    transaction.setTo(to);
     transaction.setTransactionDate(LocalDateTime.now());
     transaction.setAmount(transferMoneyRequest.amount());
 
-    if (!from.hasEnoughBalance(transferMoneyRequest.amount())) {
+    if (from.getBalance().compareTo(transaction.getAmount()) < 0) { //
+      log.warn("User#{} account {} can not transfer {} amount!",
+               user.getId(),
+               from.getId(),
+               transaction.getAmount());
+
       transaction.setStatus(TransactionStatus.FAILED);
 
       transactionRepository.save(transaction);
@@ -73,11 +91,17 @@ public class DBTransactionService implements TransactionService {
                                                                 Locale.ENGLISH));
     }
 
-    transferMoney(from, to, transferMoneyRequest.amount());
+    transferMoney(transaction.getFrom(), transaction.getTo(), transaction.getAmount());
 
     transaction.setStatus(TransactionStatus.SUCCESS);
 
     transactionRepository.save(transaction);
+
+    log.info("User#{} transferred {} from {} to {}",
+             user.getId(),
+             transaction.getAmount(),
+             transaction.getFrom(),
+             transaction.getTo());
 
     return new TransferMoneyResponse(transaction.getStatus(), "");
   }

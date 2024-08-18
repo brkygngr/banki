@@ -11,13 +11,21 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "account")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = {"user", "createdAt", "updatedAt"})
+@EqualsAndHashCode(exclude = {"user", "balance", "createdAt", "updatedAt"})
 public class Account {
 
   @Id
@@ -42,8 +50,4 @@ public class Account {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
-
-  public synchronized boolean hasEnoughBalance(final BigDecimal amount) {
-    return balance.compareTo(amount) >= 0;
-  }
 }
