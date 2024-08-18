@@ -13,13 +13,24 @@ export function RegisterForm({ isRegistering, onRegister, navigate }: RegisterFo
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await onRegister({ username, email, password });
+    try {
+      await onRegister({ username, email, password });
 
-    navigate('/login');
+      navigate('/login');
+    } catch (e) {
+      console.error(e);
+
+      if (e && typeof e === 'object' && 'data' in e && e.data) {
+        const msg = (e.data as Record<string, string>).errors?.[0];
+
+        setErrorMsg(msg);
+      }
+    }
   };
 
   return (
@@ -60,6 +71,8 @@ export function RegisterForm({ isRegistering, onRegister, navigate }: RegisterFo
             <Button className="mb-3" variant="primary" type="submit" disabled={isRegistering}>
               {isRegistering ? 'Registering...' : 'Register'}
             </Button>
+
+            {errorMsg && <p>{errorMsg}</p>}
 
             <p>
               Have an account? <Link to="/login">Login here</Link>

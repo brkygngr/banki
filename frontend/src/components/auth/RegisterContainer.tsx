@@ -8,7 +8,7 @@ export function RegisterContainer() {
   const navigate = useNavigate();
 
   const handleRegister = async (request: RegisterRequest) => {
-    await register(request);
+    await register(request).unwrap();
   };
 
   return <RegisterForm onRegister={handleRegister} isRegistering={isLoading} navigate={navigate} />;

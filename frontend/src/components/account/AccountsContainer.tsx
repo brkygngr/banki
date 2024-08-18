@@ -30,6 +30,8 @@ export function AccountsContainer() {
 
   const handleCreate = async (request: CreateAccountRequest) => {
     await createAccount(request);
+
+    await getAccounts.refetch();
   };
 
   const handleSearch = async (params: GetAccountsParams) => {

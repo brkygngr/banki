@@ -12,13 +12,24 @@ interface LoginFormProps {
 export function LoginForm({ isLogging, onLogin, navigate }: LoginFormProps) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await onLogin({ identifier, password });
+    try {
+      await onLogin({ identifier, password });
 
-    navigate('/accounts');
+      navigate('/accounts');
+    } catch (e) {
+      console.error(e);
+
+      if (e && typeof e === 'object' && 'data' in e && e.data) {
+        const msg = (e.data as Record<string, string>).errors?.[0];
+
+        setErrorMsg(msg);
+      }
+    }
   };
 
   return (
@@ -50,6 +61,8 @@ export function LoginForm({ isLogging, onLogin, navigate }: LoginFormProps) {
             <Button className="mb-3" variant="primary" type="submit" disabled={isLogging}>
               {isLogging ? 'Logging in...' : 'Login'}
             </Button>
+
+            {errorMsg && <p>{errorMsg}</p>}
 
             <p>
               Don&apos;t have an account yet? <Link to="/register">Register here</Link>
