@@ -36,7 +36,7 @@ public class AccountControllerImpl implements AccountController {
   @Override
   public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody
                                                              @Valid final CreateAccountRequest createAccountRequest,
-                                                             JwtAuthenticationToken authentication) {
+                                                             final JwtAuthenticationToken authentication) {
     Jwt principal = (Jwt) authentication.getPrincipal();
 
     String username = principal.getClaim("preferred_username");
@@ -54,8 +54,8 @@ public class AccountControllerImpl implements AccountController {
   @GetMapping
   @Override
   public ResponseEntity<Page<AccountResponse>> searchAccounts(@Valid final SearchAccountsQuery searchAccountsQuery,
-                                                              Pageable pageable,
-                                                              JwtAuthenticationToken authentication) {
+                                                              final Pageable pageable,
+                                                              final JwtAuthenticationToken authentication) {
     Jwt principal = (Jwt) authentication.getPrincipal();
 
     String username = principal.getClaim("preferred_username");
@@ -71,7 +71,7 @@ public class AccountControllerImpl implements AccountController {
   @Override
   public ResponseEntity<Void> updateAccount(@PathVariable final UUID accountId,
                                             @RequestBody @Valid final UpdateAccountRequest updateAccountRequest,
-                                            JwtAuthenticationToken authentication) {
+                                            final JwtAuthenticationToken authentication) {
     Jwt principal = (Jwt) authentication.getPrincipal();
 
     String username = principal.getClaim("preferred_username");
@@ -83,7 +83,8 @@ public class AccountControllerImpl implements AccountController {
 
   @DeleteMapping("/{accountId}")
   @Override
-  public ResponseEntity<Void> deleteAccount(@PathVariable final UUID accountId, JwtAuthenticationToken authentication) {
+  public ResponseEntity<Void> deleteAccount(@PathVariable final UUID accountId,
+                                            final JwtAuthenticationToken authentication) {
     Jwt principal = (Jwt) authentication.getPrincipal();
 
     String username = principal.getClaim("preferred_username");
@@ -96,7 +97,7 @@ public class AccountControllerImpl implements AccountController {
   @GetMapping("/{accountId}")
   @Override
   public ResponseEntity<AccountResponse> getAccount(@PathVariable final UUID accountId,
-                                                    JwtAuthenticationToken authentication) {
+                                                    final JwtAuthenticationToken authentication) {
     Jwt principal = (Jwt) authentication.getPrincipal();
 
     String username = principal.getClaim("preferred_username");

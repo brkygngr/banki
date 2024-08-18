@@ -61,6 +61,7 @@ class DBAccountServiceTest {
   @Test
   void createAccount_whenUserNotFound_thenThrowException() {
     String username = "nonExistentUser";
+
     CreateAccountRequest request = new CreateAccountRequest("Test Account");
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -93,6 +94,7 @@ class DBAccountServiceTest {
   @Test
   void searchAccounts_whenUserNotFound_thenThrowException() {
     String username = "nonExistentUser";
+
     SearchAccountsQuery searchAccountsQuery = new SearchAccountsQuery(Optional.of("number"), Optional.of("name"));
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -103,11 +105,11 @@ class DBAccountServiceTest {
 
   @Test
   void searchAccounts_whenQueried_thenUsesAccountSpecification() {
-    SearchAccountsQuery searchAccountsQuery = new SearchAccountsQuery(Optional.of("number"), Optional.of("name"));
-
     User user = new User();
     user.setId(UUID.randomUUID());
     user.setUsername("test user");
+
+    SearchAccountsQuery searchAccountsQuery = new SearchAccountsQuery(Optional.of("number"), Optional.of("name"));
 
     when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
     when(accountRepository.findAll(any(AccountSpecification.class), any(Pageable.class))).thenReturn(Page.empty());
@@ -121,25 +123,23 @@ class DBAccountServiceTest {
 
   @Test
   void updateAccount_whenAccountDoesNotExists_thenThrowsException() {
-    UUID accountId = UUID.randomUUID();
-    UpdateAccountRequest request = new UpdateAccountRequest("Updated Account Name");
-
     User user = new User();
     user.setId(UUID.randomUUID());
     user.setUsername("test user");
+
+    UUID accountId = UUID.randomUUID();
 
     when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
     when(accountRepository.findByIdAndUser(accountId, user)).thenReturn(Optional.empty());
 
     assertThrows(AccountNotFoundException.class,
-                 () -> dbAccountService.updateAccount(user.getUsername(), accountId, request));
+                 () -> dbAccountService.updateAccount(user.getUsername(),
+                                                      accountId,
+                                                      new UpdateAccountRequest("Updated Account Name")));
   }
 
   @Test
   void updateAccount_whenAccountExists_thenUpdatesAccountName() {
-    // Arrange
-    UpdateAccountRequest request = new UpdateAccountRequest("Updated Account Name");
-
     User user = new User();
     user.setId(UUID.randomUUID());
     user.setUsername("test user");
@@ -147,6 +147,8 @@ class DBAccountServiceTest {
     Account account = new Account();
     account.setId(UUID.randomUUID());
     account.setName("Old Account Name");
+
+    UpdateAccountRequest request = new UpdateAccountRequest("Updated Account Name");
 
     when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
     when(accountRepository.findByIdAndUser(account.getId(), user)).thenReturn(Optional.of(account));
@@ -159,6 +161,7 @@ class DBAccountServiceTest {
   @Test
   void deleteAccount_whenUserNotFound_thenThrowsException() {
     String username = "nonExistentUser";
+
     UUID accountId = UUID.randomUUID();
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -169,10 +172,12 @@ class DBAccountServiceTest {
   @Test
   void deleteAccount_whenAccountNotFound_thenThrowsException() {
     String username = "testUser";
-    UUID accountId = UUID.randomUUID();
+
     User user = new User();
     user.setUsername(username);
     user.setId(UUID.randomUUID());
+
+    UUID accountId = UUID.randomUUID();
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
     when(accountRepository.existsByIdAndUser(accountId, user)).thenReturn(false);
@@ -183,10 +188,12 @@ class DBAccountServiceTest {
   @Test
   void deleteAccount_whenAccountExists_thenDeletesAccount() {
     String username = "testUser";
-    UUID accountId = UUID.randomUUID();
+
     User user = new User();
     user.setUsername(username);
     user.setId(UUID.randomUUID());
+
+    UUID accountId = UUID.randomUUID();
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
     when(accountRepository.existsByIdAndUser(accountId, user)).thenReturn(true);
@@ -199,6 +206,7 @@ class DBAccountServiceTest {
   @Test
   void getAccount_whenUserNotFound_thenThrowsException() {
     String username = "nonExistentUser";
+
     UUID accountId = UUID.randomUUID();
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -209,10 +217,12 @@ class DBAccountServiceTest {
   @Test
   void getAccount_whenAccountNotFound_thenThrowException() {
     String username = "testUser";
-    UUID accountId = UUID.randomUUID();
+
     User user = new User();
     user.setUsername(username);
     user.setId(UUID.randomUUID());
+
+    UUID accountId = UUID.randomUUID();
 
     when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
     when(accountRepository.findByIdAndUser(accountId, user)).thenReturn(Optional.empty());

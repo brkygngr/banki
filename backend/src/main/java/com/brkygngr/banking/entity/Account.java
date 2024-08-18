@@ -42,4 +42,8 @@ public class Account {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  public synchronized boolean hasEnoughBalance(final BigDecimal amount) {
+    return balance.compareTo(amount) >= 0;
+  }
 }
