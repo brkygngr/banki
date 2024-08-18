@@ -135,7 +135,8 @@ class DBAccountServiceTest {
     assertThrows(AccountNotFoundException.class,
                  () -> dbAccountService.updateAccount(user.getUsername(),
                                                       accountId,
-                                                      new UpdateAccountRequest("Updated Account Name")));
+                                                      new UpdateAccountRequest("Updated Account Name",
+                                                                               BigDecimal.ZERO)));
   }
 
   @Test
@@ -148,7 +149,7 @@ class DBAccountServiceTest {
     account.setId(UUID.randomUUID());
     account.setName("Old Account Name");
 
-    UpdateAccountRequest request = new UpdateAccountRequest("Updated Account Name");
+    UpdateAccountRequest request = new UpdateAccountRequest("Updated Account Name", BigDecimal.ZERO);
 
     when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
     when(accountRepository.findByIdAndUser(account.getId(), user)).thenReturn(Optional.of(account));
@@ -156,6 +157,26 @@ class DBAccountServiceTest {
     dbAccountService.updateAccount(user.getUsername(), account.getId(), request);
 
     assertEquals(request.name(), account.getName());
+  }
+
+  @Test
+  void updateAccount_whenAccountExists_thenUpdatesAccountBalance() {
+    User user = new User();
+    user.setId(UUID.randomUUID());
+    user.setUsername("test user");
+
+    Account account = new Account();
+    account.setId(UUID.randomUUID());
+    account.setBalance(BigDecimal.TWO);
+
+    UpdateAccountRequest request = new UpdateAccountRequest("Updated Account Name", BigDecimal.TEN);
+
+    when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+    when(accountRepository.findByIdAndUser(account.getId(), user)).thenReturn(Optional.of(account));
+
+    dbAccountService.updateAccount(user.getUsername(), account.getId(), request);
+
+    assertEquals(request.balance(), account.getBalance());
   }
 
   @Test

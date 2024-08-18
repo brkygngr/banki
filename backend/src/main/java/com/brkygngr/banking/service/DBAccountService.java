@@ -99,6 +99,7 @@ public class DBAccountService implements AccountService {
                                        .orElseThrow(AccountNotFoundException::withDefaultMessage);
 
     account.setName(updateAccountRequest.name());
+    account.setBalance(updateAccountRequest.balance());
 
     accountRepository.save(account);
 
