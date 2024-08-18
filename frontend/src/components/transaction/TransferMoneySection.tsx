@@ -24,6 +24,7 @@ export function TransferMoneySection({ accounts, onSend }: TransferMoneySectionP
       text: account.name,
     };
   });
+  options.unshift({ value: '', text: '' });
 
   const optionEls = options.map((option) => (
     <option key={option.value} value={option.value}>
@@ -33,6 +34,12 @@ export function TransferMoneySection({ accounts, onSend }: TransferMoneySectionP
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (from === to) {
+      alert('Accounts must be different');
+
+      return;
+    }
 
     await onSend({ from, to, amount });
   };
