@@ -34,17 +34,15 @@ public class KeycloakAccessor {
   private final String backendClientId;
   private final String backendClientSecret;
 
-  public KeycloakAccessor(
-      final RestTemplate restTemplate,
-      @Value("${keycloak.url}") final String keycloakUrl,
-      @Value("${keycloak.clientId}") final String adminClientId,
-      @Value("${keycloak.admin.realm}") final String adminRealm,
-      @Value("${keycloak.admin.username}") final String adminUsername,
-      @Value("${keycloak.admin.password}") final String adminPassword,
-      @Value("${keycloak.backend.realm}") final String backendRealm,
-      @Value("${keycloak.backend.clientId}") final String backendClientId,
-      @Value("${keycloak.backend.clientSecret}") final String backendClientSecret
-  ) {
+  public KeycloakAccessor(final RestTemplate restTemplate,
+                          @Value("${keycloak.url}") final String keycloakUrl,
+                          @Value("${keycloak.clientId}") final String adminClientId,
+                          @Value("${keycloak.admin.realm}") final String adminRealm,
+                          @Value("${keycloak.admin.username}") final String adminUsername,
+                          @Value("${keycloak.admin.password}") final String adminPassword,
+                          @Value("${keycloak.backend.realm}") final String backendRealm,
+                          @Value("${keycloak.backend.clientId}") final String backendClientId,
+                          @Value("${keycloak.backend.clientSecret}") final String backendClientSecret) {
     this.restTemplate = restTemplate;
     this.keycloakUrl = keycloakUrl;
     this.adminClientId = adminClientId;
@@ -89,7 +87,8 @@ public class KeycloakAccessor {
 
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(userTokenMap, headers);
 
-    ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(postUserUrl, request,
+    ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(postUserUrl,
+                                                                                request,
                                                                                 KeycloakTokenResponse.class);
 
     return response.getBody();
@@ -104,18 +103,19 @@ public class KeycloakAccessor {
   }
 
   private Map<String, Object> createRegisterUserBody(final User user) {
-    return Map.of(
-        "username", user.getUsername(),
-        "email", user.getEmail(),
-        "enabled", true,
-        "credentials", Collections.singletonList(
-            Map.of(
-                "type", "password",
-                "value", user.getPassword(),
-                "temporary", false
-            )
-        )
-    );
+    return Map.of("username",
+                  user.getUsername(),
+                  "email",
+                  user.getEmail(),
+                  "enabled",
+                  true,
+                  "credentials",
+                  Collections.singletonList(Map.of("type",
+                                                   "password",
+                                                   "value",
+                                                   user.getPassword(),
+                                                   "temporary",
+                                                   false)));
   }
 
   private MultiValueMap<String, String> createAdminTokenRequestBody() {
@@ -142,12 +142,10 @@ public class KeycloakAccessor {
   private void createRealmIfNotExists(final HttpHeaders headers) {
     String realmsUrl = keycloakUrl + "/admin/realms";
 
-    ResponseEntity<KeycloakRealmResponse[]> response = restTemplate.exchange(
-        realmsUrl,
-        HttpMethod.GET,
-        new HttpEntity<>(headers),
-        KeycloakRealmResponse[].class
-    );
+    ResponseEntity<KeycloakRealmResponse[]> response = restTemplate.exchange(realmsUrl,
+                                                                             HttpMethod.GET,
+                                                                             new HttpEntity<>(headers),
+                                                                             KeycloakRealmResponse[].class);
 
     if (response.getBody() == null) {
       throw new KeycloakException("app.keycloak.realms.not.found");
@@ -165,10 +163,7 @@ public class KeycloakAccessor {
     if (!isRealmExists) {
       log.info("Keycloak realm does not exists. Creating realm.");
 
-      Map<String, Object> realmMap = Map.of(
-          "realm", backendRealm,
-          "enabled", true
-      );
+      Map<String, Object> realmMap = Map.of("realm", backendRealm, "enabled", true);
 
       restTemplate.postForEntity(realmsUrl, new HttpEntity<>(realmMap, headers), Void.class);
 
@@ -181,12 +176,10 @@ public class KeycloakAccessor {
   private void createClientIfNotExists(final HttpHeaders headers) {
     String clientsUrl = keycloakUrl + "/admin/realms/" + backendRealm + "/clients";
 
-    ResponseEntity<KeycloakClientResponse[]> response = restTemplate.exchange(
-        clientsUrl,
-        HttpMethod.GET,
-        new HttpEntity<>(headers),
-        KeycloakClientResponse[].class
-    );
+    ResponseEntity<KeycloakClientResponse[]> response = restTemplate.exchange(clientsUrl,
+                                                                              HttpMethod.GET,
+                                                                              new HttpEntity<>(headers),
+                                                                              KeycloakClientResponse[].class);
 
     if (response.getBody() == null) {
       throw new KeycloakException("app.keycloak.clients.not.found");
@@ -204,16 +197,22 @@ public class KeycloakAccessor {
     if (!isClientExists) {
       log.info("Keycloak client does not exists. Creating client.");
 
-      Map<String, Object> clientMap = Map.of(
-          "clientId", backendClientId,
-          "secret", backendClientSecret,
-          "clientAuthenticatorType", "client-secret",
-          "protocol", "openid-connect",
-          "publicClient", false,
-          "directAccessGrantsEnabled", true,
-          "serviceAccountsEnabled", true,
-          "enabled", true
-      );
+      Map<String, Object> clientMap = Map.of("clientId",
+                                             backendClientId,
+                                             "secret",
+                                             backendClientSecret,
+                                             "clientAuthenticatorType",
+                                             "client-secret",
+                                             "protocol",
+                                             "openid-connect",
+                                             "publicClient",
+                                             false,
+                                             "directAccessGrantsEnabled",
+                                             true,
+                                             "serviceAccountsEnabled",
+                                             true,
+                                             "enabled",
+                                             true);
 
       restTemplate.postForEntity(clientsUrl, new HttpEntity<>(clientMap, headers), Void.class);
 
@@ -231,22 +230,22 @@ public class KeycloakAccessor {
         + backendRealm
         + "/authentication/required-actions/VERIFY_PROFILE";
 
-    Map<String, Object> verifyProfileMap = Map.of(
-        "alias", "VERIFY_PROFILE",
-        "name", "Verify Profile",
-        "providerId", "VERIFY_PROFILE",
-        "enabled", false,
-        "defaultAction", false,
-        "priority", 10,
-        "config", Map.of()  // Assuming `config` is an empty map
-    );
+    Map<String, Object> verifyProfileMap = Map.of("alias",
+                                                  "VERIFY_PROFILE",
+                                                  "name",
+                                                  "Verify Profile",
+                                                  "providerId",
+                                                  "VERIFY_PROFILE",
+                                                  "enabled",
+                                                  false,
+                                                  "defaultAction",
+                                                  false,
+                                                  "priority",
+                                                  10,
+                                                  "config",
+                                                  Map.of());
 
-    restTemplate.exchange(
-        authReqActUrl,          // URL
-        HttpMethod.PUT,         // HTTP Method
-        new HttpEntity<>(verifyProfileMap, headers),          // Request Entity
-        Void.class              // Response Type
-    );
+    restTemplate.exchange(authReqActUrl, HttpMethod.PUT, new HttpEntity<>(verifyProfileMap, headers), Void.class);
 
     log.info("Keycloak disabled verify profile.");
   }
@@ -258,7 +257,8 @@ public class KeycloakAccessor {
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(tokenFormBody, headers);
 
-    ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(tokenUri, request,
+    ResponseEntity<KeycloakTokenResponse> response = restTemplate.postForEntity(tokenUri,
+                                                                                request,
                                                                                 KeycloakTokenResponse.class);
 
     if (response.getBody() == null) {

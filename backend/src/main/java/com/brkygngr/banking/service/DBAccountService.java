@@ -45,7 +45,7 @@ public class DBAccountService implements AccountService {
     StringBuilder accountNumber = new StringBuilder(ACCOUNT_NUMBER_LENGTH);
 
     for (int i = 0; i < ACCOUNT_NUMBER_LENGTH; i++) {
-      accountNumber.append(random.nextInt(10)); // Append a random digit (0-9)
+      accountNumber.append(random.nextInt(10));
     }
 
     Account account = new Account();

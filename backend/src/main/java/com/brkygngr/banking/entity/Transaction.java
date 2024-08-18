@@ -42,7 +42,6 @@ public class Transaction {
   @Column(nullable = false)
   private TransactionStatus status;
 
-  // Enum for transaction status
   public enum TransactionStatus {
     SUCCESS,
     FAILED

@@ -21,7 +21,7 @@ interface RegisterResponse {
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_DOMAIN }), // Replace with your API base URL
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_DOMAIN + '/users' }),
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (request) => ({

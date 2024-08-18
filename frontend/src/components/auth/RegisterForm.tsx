@@ -16,13 +16,10 @@ export function RegisterForm({ isRegistering, onRegister, navigate }: RegisterFo
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      await onRegister({ username, email, password })
+    
+    await onRegister({ username, email, password })
 
-      navigate('/login');
-    } catch (err) {
-      console.error('Failed to register', err);
-    }
+    navigate('/login');
   };
 
   return (

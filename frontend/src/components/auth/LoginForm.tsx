@@ -20,13 +20,9 @@ export function LoginForm({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      await onLogin({ identifier, password });
+    await onLogin({ identifier, password });
 
-      navigate('/');
-    } catch (err) {
-      console.error('Failed to login', err);
-    }
+    navigate('/accounts');
   };
 
   return (
