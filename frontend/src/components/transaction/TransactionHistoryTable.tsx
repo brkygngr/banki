@@ -13,7 +13,7 @@ export function TransactionHistoryRow({ index, history }: TransactionHistoryRowP
       <td>{history.from.name}</td>
       <td>{history.to.name}</td>
       <td>{history.amount}</td>
-      <td>{history.transactionDate.toISOString()}</td>
+      <td>{history.transactionDate}</td>
       <td>{history.status}</td>
     </tr>
   );

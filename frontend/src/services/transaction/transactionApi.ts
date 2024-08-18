@@ -12,7 +12,7 @@ export interface TransactionHistoryResponse {
   from: Account;
   to: Account;
   amount: number;
-  transactionDate: Date;
+  transactionDate: string;
   status: TransactionStatus;
 }
 
