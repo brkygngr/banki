@@ -13,6 +13,7 @@ import com.brkygngr.banking.repository.AccountRepository;
 import com.brkygngr.banking.repository.UserRepository;
 import com.brkygngr.banking.repository.specification.AccountSearchCriteria;
 import com.brkygngr.banking.repository.specification.AccountSpecification;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.UUID;
@@ -82,8 +83,8 @@ public class DBAccountService implements AccountService {
     log.info("User#{} found total of {} accounts with number '{}' and name '{}'",
              user.getId(),
              accountPage.getTotalElements(),
-             searchAccountsQuery.number(),
-             searchAccountsQuery.name());
+             number,
+             name);
 
     return accountPage.map(AccountResponse::fromAccount);
   }
@@ -104,6 +105,7 @@ public class DBAccountService implements AccountService {
     log.info("User#{} updated account#{}", user.getId(), account.getId());
   }
 
+  @Transactional
   @Override
   public void deleteAccount(String username, UUID accountId) {
     User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::withDefaultMessage);

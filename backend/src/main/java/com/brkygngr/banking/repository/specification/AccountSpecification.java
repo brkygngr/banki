@@ -15,11 +15,27 @@ public class AccountSpecification implements Specification<Account> {
 
   @Override
   public Predicate toPredicate(Root<Account> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-    Predicate userPredicate = criteriaBuilder.equal(root.get("user"), accountSearchCriteria.user());
-    Predicate numberPredicate = criteriaBuilder.like(root.get("number"), "%" + accountSearchCriteria.number() + "%");
-    Predicate namePredicate = criteriaBuilder.like(root.get("name"), "%" + accountSearchCriteria.name() + "%");
+    String number = accountSearchCriteria.number();
+    String name = accountSearchCriteria.name();
 
-    Predicate numberOrNamePredicate = criteriaBuilder.or(numberPredicate, namePredicate);
+    Predicate userPredicate = criteriaBuilder.equal(root.get("user"), accountSearchCriteria.user());
+
+    if (number.isBlank() && name.isBlank()) {
+      return userPredicate;
+    }
+
+    Predicate numberPredicate = criteriaBuilder.like(root.get("number"), "%" + number + "%");
+    Predicate namePredicate = criteriaBuilder.like(root.get("name"), "%" + name + "%");
+
+    if (number.isBlank()) {
+      return criteriaBuilder.and(userPredicate, namePredicate);
+    }
+
+    if (name.isBlank()) {
+      return criteriaBuilder.and(userPredicate, numberPredicate);
+    }
+
+    Predicate numberOrNamePredicate = criteriaBuilder.and(numberPredicate, namePredicate);
 
     return criteriaBuilder.and(userPredicate, numberOrNamePredicate);
   }
